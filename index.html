@@ -16,10 +16,13 @@
 
         /* Full-screen game container */
         #game-container {
-            position: relative;
+            position: absolute;
             width: 100vw;
             height: 100vh;
             background-color: #70c5ce;
+            background-image: url('background.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
             overflow: hidden;
             border: 2px solid #fff;
         }
@@ -27,10 +30,10 @@
         /* --- BIRD SETTINGS --- */
         #bird {
             position: absolute;
-            width: 60px;
-            height: 60px;
-            background-image: url('mamata.jpeg');
-            background-size: contain;
+            width: 70px;
+            height: 70px;
+            background-image: url('didi.jpeg');
+            background-size: cover;
             background-repeat: no-repeat;
             border-radius: 50%;
             top: 200px;
@@ -42,12 +45,10 @@
         .pipe {
             position: absolute;
             width: 60px; /* must match PIPE_WIDTH */
-
             background-image: url('modii.jpeg');
             background-size: 100% 100%;
             background-repeat: no-repeat;
             background-position: center;
-
             z-index: 5;
         }
 
@@ -95,6 +96,11 @@
             text-align: center;
         }
 
+        h2 {
+            color: red;
+            margin: 0 0 20px;
+        }
+
         .btn {
             padding: 12px 30px;
             margin: 5px;
@@ -112,9 +118,13 @@
         .btn-avg  { background-color: #e67e22; }
         .btn-hard { background-color: #c0392b; }
         .btn-restart { background-color: #2980b9; margin-top: 15px; }
+        .btn-main { background-color: #8e44ad; }
+        .btn-quit { background-color: #7f8c8d; }
+
         .btn:hover { filter: brightness(1.1); }
         
         #game-over-screen { display: none; }
+        #difficulty-menu { display: none; }
     </style>
 </head>
 <body>
@@ -123,24 +133,34 @@
         <div id="bird"></div>
         <div id="score">0</div>
 
-        <div id="start-screen" class="menu-screen">
-            <h1>FLAPPY BIRD</h1>
+        <!-- FIRST SCREEN: PLAY / QUIT -->
+        <div id="main-menu" class="menu-screen">
+            <h1>FLYING DIDI</h1>
+            <button class="btn btn-main" onclick="showDifficultyMenu()">Play</button>
+            <button class="btn btn-quit" onclick="quitGame()">Quit</button>
+        </div>
+
+        <!-- SECOND SCREEN: DIFFICULTY SELECT -->
+        <div id="difficulty-menu" class="menu-screen">
+            <h1>SELECT LEVEL</h1>
             <button class="btn btn-easy" onclick="initGame('easy')">Easy</button>
             <button class="btn btn-avg" onclick="initGame('average')">Average</button>
             <button class="btn btn-hard" onclick="initGame('hard')">Hard</button>
         </div>
 
+        <!-- GAME OVER SCREEN -->
         <div id="game-over-screen" class="menu-screen">
             <h1>GAME OVER</h1>
             <p style="color: white; font-size: 20px; margin: 0;">Score: <span id="final-score">0</span></p>
             <button class="btn btn-restart" onclick="resetGame()">Try Again</button>
+            <!-- You can keep reload as "Menu" to return to Play/Quit -->
             <button class="btn btn-avg" onclick="location.reload()">Menu</button>
         </div>
     </div>
 
     <!-- SOUND EFFECTS -->
     <audio id="start-sound" src="star.mp3" preload="auto"></audio>
-    <audio id="end-sound" src="gameover.mp3" preload="auto"></audio>
+    <audio id="end-sound" src="game_end_voice.mp3" preload="auto"></audio>
     <audio id="flap-sound" src="" preload="auto"></audio>
     <audio id="bgm-sound" src="start.mp3" preload="auto" loop></audio>
 
@@ -149,7 +169,9 @@
         const bird = document.getElementById('bird');
         const scoreDisplay = document.getElementById('score');
         const finalScoreDisplay = document.getElementById('final-score');
-        const startScreen = document.getElementById('start-screen');
+
+        const mainMenu = document.getElementById('main-menu');
+        const difficultyMenu = document.getElementById('difficulty-menu');
         const gameOverScreen = document.getElementById('game-over-screen');
 
         const startSound = document.getElementById('start-sound');
@@ -163,7 +185,7 @@
         let birdY = 200;
         let birdVelocity = 0;
 
-        // These will change based on level
+        // Level-dependent
         let gravity = 0.35;
         let jumpStrength = -7;
 
@@ -184,6 +206,24 @@
         window.addEventListener('resize', () => {
             location.reload();
         });
+
+        // FIRST SCREEN → DIFFICULTY MENU
+        function showDifficultyMenu() {
+            mainMenu.style.display = 'none';
+            difficultyMenu.style.display = 'flex';
+        }
+
+        // QUIT BUTTON
+        function quitGame() {
+            if (bgmSound) {
+                bgmSound.pause();
+            }
+            alert('Thanks for playing!');
+            // window.close() may not work on all browsers, but you can keep it:
+            try {
+                window.close();
+            } catch (e) {}
+        }
 
         function initGame(mode) {
             currentMode = mode;
@@ -212,7 +252,8 @@
             GAME_WIDTH = gameContainer.clientWidth;
             GAME_HEIGHT = gameContainer.clientHeight;
 
-            startScreen.style.display = 'none';
+            // Hide menus when starting game
+            difficultyMenu.style.display = 'none';
             gameOverScreen.style.display = 'none';
 
             // ▶ Start sound
