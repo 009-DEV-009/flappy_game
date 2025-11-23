@@ -28,6 +28,7 @@
             border: 2px solid #fff;
             box-shadow: 0 0 40px rgba(0,0,0,0.6);
             animation: bg-pan 20s linear infinite alternate;
+            will-change: transform, background-position;
         }
 
         @keyframes bg-pan {
@@ -46,9 +47,10 @@
             border-radius: 50%;
             top: 200px;
             left: 50px;
-            z-index: 10;          /* bird above wings */
+            z-index: 10;
             overflow: visible;
             box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+            will-change: transform, top;
         }
 
         /* ================= FUNNY CARTOON WINGS ================= */
@@ -61,6 +63,7 @@
             border-radius: 60% 90% 60% 10%;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             animation: wingFlap 0.32s ease-in-out infinite;
+            will-change: transform;
         }
 
         .wing::before {
@@ -75,22 +78,22 @@
         }
 
         #wing-left {
-            left: -35px;   /* wings peeking from behind */
+            left: -25px;
             top: 20px;
             transform-origin: 100% 50%;
         }
 
         #wing-right {
-            right: -35px;
+            right: -30px;
             top: 20px;
             transform-origin: 0% 50%;
             transform: scaleX(-1);
         }
 
         @keyframes wingFlap {
-            0%   { transform: rotate(8deg) translateY(0); }
-            50%  { transform: rotate(-22deg) translateY(-5px); }
-            100% { transform: rotate(8deg) translateY(0); }
+            0%   { transform: translate3d(0,0,0) rotate(8deg); }
+            50%  { transform: translate3d(0,-5px,0) rotate(-22deg); }
+            100% { transform: translate3d(0,0,0) rotate(8deg); }
         }
 
         /* Faster animation when flying up */
@@ -109,6 +112,7 @@
             background-position: center;
             z-index: 5;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.7));
+            will-change: transform, left;
         }
 
         .pipe-top {
@@ -209,6 +213,38 @@
         
         #game-over-screen { display: none; }
         #difficulty-menu { display: none; }
+
+        /* ================== MOBILE OPTIMIZATION ==================
+           On smaller devices: cut heavy background animation and
+           some shadows to reduce jank.
+        ========================================================= */
+        @media (max-width: 768px) {
+            #game-container {
+                animation: none;                 /* stop bg-pan on mobile */
+                box-shadow: 0 0 18px rgba(0,0,0,0.6);
+            }
+
+            .pipe {
+                filter: none;                   /* drop-shadow off on pipes */
+            }
+
+            #bird {
+                box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            }
+
+            h1 {
+                animation: none;                /* stop title float on mobile */
+            }
+
+            .menu-screen {
+                animation: none;                /* no fade-in animation */
+            }
+
+            .btn {
+                transition: none;               /* simpler buttons */
+                box-shadow: 0 6px 12px rgba(0,0,0,0.6);
+            }
+        }
     </style>
 </head>
 <body>
