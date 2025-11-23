@@ -8,7 +8,7 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #333;
+            background-color: #111;
             font-family: 'Arial', sans-serif;
             overflow: hidden;
             user-select: none;
@@ -23,8 +23,16 @@
             background-image: url('background.jpg');
             background-size: cover;
             background-repeat: no-repeat;
+            background-position: center;
             overflow: hidden;
             border: 2px solid #fff;
+            box-shadow: 0 0 40px rgba(0,0,0,0.6);
+            animation: bg-pan 20s linear infinite alternate;
+        }
+
+        @keyframes bg-pan {
+            0%   { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
         }
 
         /* --- BIRD SETTINGS --- */
@@ -38,18 +46,69 @@
             border-radius: 50%;
             top: 200px;
             left: 50px;
-            z-index: 10;
+            z-index: 10;          /* bird above wings */
+            overflow: visible;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.5);
         }
+
+        /* ================= FUNNY CARTOON WINGS ================= */
+        .wing {
+            position: absolute;
+            width: 42px;
+            height: 24px;
+            z-index: 9; /* behind the ball so face is visible */
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 40%, #f0932b 100%);
+            border-radius: 60% 90% 60% 10%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            animation: wingFlap 0.32s ease-in-out infinite;
+        }
+
+        .wing::before {
+            content: "";
+            position: absolute;
+            width: 70%;
+            height: 90%;
+            right: -6px;
+            top: 2px;
+            background: radial-gradient(circle at 0% 50%, #ffeaa7 0%, #ffeaa7 30%, rgba(255,255,255,0) 60%);
+            opacity: 0.9;
+        }
+
+        #wing-left {
+            left: -35px;   /* wings peeking from behind */
+            top: 20px;
+            transform-origin: 100% 50%;
+        }
+
+        #wing-right {
+            right: -35px;
+            top: 20px;
+            transform-origin: 0% 50%;
+            transform: scaleX(-1);
+        }
+
+        @keyframes wingFlap {
+            0%   { transform: rotate(8deg) translateY(0); }
+            50%  { transform: rotate(-22deg) translateY(-5px); }
+            100% { transform: rotate(8deg) translateY(0); }
+        }
+
+        /* Faster animation when flying up */
+        .fast-flap {
+            animation-duration: 0.16s !important;
+        }
+        /* ======================================================= */
 
         /* --- PIPE SETTINGS --- */
         .pipe {
             position: absolute;
-            width: 60px; /* must match PIPE_WIDTH */
+            width: 60px;
             background-image: url('modii.jpeg');
             background-size: 100% 100%;
             background-repeat: no-repeat;
             background-position: center;
             z-index: 5;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.7));
         }
 
         .pipe-top {
@@ -67,10 +126,14 @@
             left: 50%;
             transform: translateX(-50%);
             font-size: 40px;
-            color: white;
+            color: #fff;
             font-weight: bold;
             z-index: 20;
             text-shadow: 2px 2px 0 #000;
+            padding: 4px 16px;
+            border-radius: 999px;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(4px);
         }
 
         /* Menus */
@@ -80,25 +143,34 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: radial-gradient(circle at top, rgba(0,0,0,0.7), rgba(0,0,0,0.95));
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 30;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
         h1 {
-            color: white;
-            text-shadow: 2px 2px 0 #000;
+            color: #fff;
+            text-shadow: 0 0 12px rgba(0,0,0,0.9);
             margin-bottom: 20px;
-            font-size: 36px;
+            font-size: 38px;
             text-align: center;
+            letter-spacing: 2px;
+            animation: titleFloat 3s ease-in-out infinite;
         }
 
-        h2 {
-            color: red;
-            margin: 0 0 20px;
+        @keyframes titleFloat {
+            0%   { transform: translateY(0); }
+            50%  { transform: translateY(-6px); }
+            100% { transform: translateY(0); }
         }
 
         .btn {
@@ -108,20 +180,32 @@
             color: white;
             border: none;
             cursor: pointer;
-            border: 2px solid #fff;
-            width: 150px;
+            border-radius: 999px;
+            border: 2px solid rgba(255,255,255,0.85);
+            width: 180px;
             text-transform: uppercase;
             font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.6);
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
         }
 
-        .btn-easy { background-color: #27ae60; }
-        .btn-avg  { background-color: #e67e22; }
-        .btn-hard { background-color: #c0392b; }
-        .btn-restart { background-color: #2980b9; margin-top: 15px; }
-        .btn-main { background-color: #8e44ad; }
-        .btn-quit { background-color: #7f8c8d; }
+        .btn-easy    { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+        .btn-avg     { background: linear-gradient(135deg, #e67e22, #f39c12); }
+        .btn-hard    { background: linear-gradient(135deg, #c0392b, #e74c3c); }
+        .btn-restart { background: linear-gradient(135deg, #2980b9, #3498db); }
 
-        .btn:hover { filter: brightness(1.1); }
+        .btn:hover {
+            filter: brightness(1.07);
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 14px 28px rgba(0,0,0,0.75);
+        }
+
+        .btn:active {
+            transform: translateY(0) scale(0.97);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.7);
+        }
         
         #game-over-screen { display: none; }
         #difficulty-menu { display: none; }
@@ -130,43 +214,51 @@
 <body>
 
     <div id="game-container">
-        <div id="bird"></div>
+        <!-- BIRD + FUNNY WINGS -->
+        <div id="bird">
+            <div id="wing-left" class="wing"></div>
+            <div id="wing-right" class="wing"></div>
+        </div>
+
         <div id="score">0</div>
 
-        <!-- FIRST SCREEN: PLAY / QUIT -->
+        <!-- FIRST SCREEN: PLAY -->
         <div id="main-menu" class="menu-screen">
             <h1>FLYING DIDI</h1>
             <button class="btn btn-main" onclick="showDifficultyMenu()">Play</button>
-            <button class="btn btn-quit" onclick="quitGame()">Quit</button>
         </div>
 
         <!-- SECOND SCREEN: DIFFICULTY SELECT -->
         <div id="difficulty-menu" class="menu-screen">
             <h1>SELECT LEVEL</h1>
             <button class="btn btn-easy" onclick="initGame('easy')">Easy</button>
-            <button class="btn btn-avg" onclick="initGame('average')">Average</button>
+            <button class="btn btn-avg"  onclick="initGame('average')">Average</button>
             <button class="btn btn-hard" onclick="initGame('hard')">Hard</button>
         </div>
 
         <!-- GAME OVER SCREEN -->
         <div id="game-over-screen" class="menu-screen">
             <h1>GAME OVER</h1>
-            <p style="color: white; font-size: 20px; margin: 0;">Score: <span id="final-score">0</span></p>
+            <p style="color: white; font-size: 20px; margin: 0;">
+                Score: <span id="final-score">0</span>
+            </p>
             <button class="btn btn-restart" onclick="resetGame()">Try Again</button>
-            <!-- You can keep reload as "Menu" to return to Play/Quit -->
             <button class="btn btn-avg" onclick="location.reload()">Menu</button>
         </div>
     </div>
 
     <!-- SOUND EFFECTS -->
     <audio id="start-sound" src="star.mp3" preload="auto"></audio>
-    <audio id="end-sound" src="game_end_voice.mp3" preload="auto"></audio>
-    <audio id="flap-sound" src="" preload="auto"></audio>
-    <audio id="bgm-sound" src="start.mp3" preload="auto" loop></audio>
+    <audio id="end-sound"   src="game_end_voice.mp3" preload="auto"></audio>
+    <audio id="flap-sound"  src="" preload="auto"></audio>
+    <audio id="bgm-sound"   src="start.mp3" preload="auto" loop></audio>
 
     <script>
         const gameContainer = document.getElementById('game-container');
         const bird = document.getElementById('bird');
+        const wingLeft = document.getElementById('wing-left');
+        const wingRight = document.getElementById('wing-right');
+
         const scoreDisplay = document.getElementById('score');
         const finalScoreDisplay = document.getElementById('final-score');
 
@@ -185,7 +277,6 @@
         let birdY = 200;
         let birdVelocity = 0;
 
-        // Level-dependent
         let gravity = 0.35;
         let jumpStrength = -7;
 
@@ -202,48 +293,35 @@
         let pipeSpeed = 2;
         let pipeFreq = 1900;
 
-        // Recalculate on resize (simple: reload)
+        let goingUp = false; // track when bird is moving upward
+
         window.addEventListener('resize', () => {
             location.reload();
         });
 
-        // FIRST SCREEN → DIFFICULTY MENU
         function showDifficultyMenu() {
             mainMenu.style.display = 'none';
             difficultyMenu.style.display = 'flex';
         }
 
-        // QUIT BUTTON
-        function quitGame() {
-            if (bgmSound) {
-                bgmSound.pause();
-            }
-            alert('Thanks for playing!');
-            // window.close() may not work on all browsers, but you can keep it:
-            try {
-                window.close();
-            } catch (e) {}
-        }
-
         function initGame(mode) {
             currentMode = mode;
 
-            // LEVEL TUNING with low jumps
             if (mode === 'easy') {
                 gravity = 0.28;
-                jumpStrength = -7;   // low jump
+                jumpStrength = -7;
                 pipeGap = 340;
                 pipeSpeed = 1.7;
                 pipeFreq = 2300;
             } else if (mode === 'average') {
                 gravity = 0.34;
-                jumpStrength = -6.5; // low jump
+                jumpStrength = -6.5;
                 pipeGap = 250;
                 pipeSpeed = 2.3;
                 pipeFreq = 1900;
             } else if (mode === 'hard') {
                 gravity = 0.38;
-                jumpStrength = -6;   // low jump
+                jumpStrength = -6;
                 pipeGap = 200;
                 pipeSpeed = 2.8;
                 pipeFreq = 1750;
@@ -252,20 +330,21 @@
             GAME_WIDTH = gameContainer.clientWidth;
             GAME_HEIGHT = gameContainer.clientHeight;
 
-            // Hide menus when starting game
             difficultyMenu.style.display = 'none';
             gameOverScreen.style.display = 'none';
 
-            // ▶ Start sound
+            goingUp = false;
+            wingLeft.classList.remove('fast-flap');
+            wingRight.classList.remove('fast-flap');
+
             if (startSound) {
                 startSound.pause();
                 startSound.currentTime = 0;
                 startSound.play().catch(() => {});
             }
 
-            // ▶ Background music start
             if (bgmSound) {
-                bgmSound.volume = 0.6; // not too loud
+                bgmSound.volume = 0.6;
                 bgmSound.play().catch(() => {});
             }
 
@@ -293,7 +372,19 @@
                 birdY += birdVelocity;
                 bird.style.top = birdY + 'px';
 
+                // tilt based on velocity
                 bird.style.transform = `rotate(${Math.min(birdVelocity * 3, 70)}deg)`;
+
+                // Wing speed logic: faster when going up (negative velocity)
+                if (birdVelocity < 0 && !goingUp) {
+                    goingUp = true;
+                    wingLeft.classList.add('fast-flap');
+                    wingRight.classList.add('fast-flap');
+                } else if (birdVelocity >= 0 && goingUp) {
+                    goingUp = false;
+                    wingLeft.classList.remove('fast-flap');
+                    wingRight.classList.remove('fast-flap');
+                }
 
                 if (birdY <= -10 || birdY + birdHeight >= GAME_HEIGHT + 5) {
                     endGame();
@@ -309,30 +400,20 @@
             document.addEventListener('touchstart', control, { passive: false });
         }
 
-        function playFlapSound() {
-            if (!flapSound) return;
-            flapSound.pause();
-            flapSound.currentTime = 0;
-            flapSound.play().catch(() => {});
-        }
-
         function control(e) {
             if (!isGameRunning || isGameOver) return;
 
             if (e.type === 'touchstart') {
                 e.preventDefault();
                 birdVelocity = jumpStrength;
-                playFlapSound();
                 return;
             }
 
             if (e.code === 'Space') {
                 e.preventDefault();
                 birdVelocity = jumpStrength;
-                playFlapSound();
             } else if (e.type === 'click') {
                 birdVelocity = jumpStrength;
-                playFlapSound();
             }
         }
 
@@ -386,11 +467,10 @@
         function checkCollisions() {
             const birdRect = bird.getBoundingClientRect();
 
-            // Forgiving hitbox
             const hitBox = {
-                left: birdRect.left + 10,
-                right: birdRect.right - 10,
-                top: birdRect.top + 10,
+                left:   birdRect.left + 10,
+                right:  birdRect.right - 10,
+                top:    birdRect.top + 10,
                 bottom: birdRect.bottom - 10
             };
 
@@ -416,17 +496,19 @@
             clearInterval(gameLoopId);
             clearInterval(pipeIntervalId);
 
-            // ⛔ Stop background music
             if (bgmSound) {
                 bgmSound.pause();
             }
 
-            // ▶ Play game over sound EXACTLY on death
             if (endSound) {
                 endSound.pause();
                 endSound.currentTime = 0;
                 endSound.play().catch(() => {});
             }
+
+            wingLeft.classList.remove('fast-flap');
+            wingRight.classList.remove('fast-flap');
+            goingUp = false;
 
             finalScoreDisplay.innerText = score;
             gameOverScreen.style.display = 'flex'; 
